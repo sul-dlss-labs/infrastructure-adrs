@@ -57,13 +57,43 @@ After considering the pros and cons of each approach, a form of option 3 was sel
 
 After discussions (with notes and original proposals linked below), we propose to use a combination of messaging and new workflow(s) to produce non-image derivatives, a form of Option 3 as decribed in documents listed above.
 
-[SUMMARY HERE]
+The basic architecture is summarized below:
+
+* The user initiates accessioning via currently systems, e.g. pre-assembly, Goobi, H2.  New user interface elements may be present to indicate if OCR or transcription is needed, and these will set new fields in cocina and/or workflow variables.
+* Accessioning will proceed as normal.
+* When accessioning is complete, an `end-accession.completed` message is currently sent.  A new service will look for these messages and use logic (TBD) to create the new workflow for that object if needed.
+* The new workflow will have steps to run OCR, transcription and possible pause for review (if needed).
+* The OCR will be peformed by ABBYY, and the transcription will be peformed by Whipser.  This services are likely to be run separately from the server running the robots, and triggered by API calls.
+* As part of the workflow, the object will be opened, and then closed when OCR and transcrption is complete.
+* Closing the object will trigger assemblyWF, which will ensure the files are properly shelved and preserved.
+* Changes being made to versioning will ensure that no other user or process can close the object while the new workflow is in process.
+
+Implementation Details:
+
+* One new workflow would be created
+
+** The workflow will be called something like textGenerationWorkflow
+** The steps in these workflows would be: openVersion, createOCR, createTranscription, review, closeVersion
+** The workflow definition will be in `workflow-server-rails`, alongside other workflows
+** The robots to act on steps in this workflow will be in `common-accessioning`
+
+* A new service to monitor for the `end-accession.completed` message will be created, which will create the new worfklow if needed.  The actual logic to determine if the workflow is needed is TBD, but will be based on a combination of content types and inputs coming from the accesioneer (via cocina model changes and/or workflow variables set via pre-assembly and/or Argo).
+* The actual implementation of performing OCR (e.g. ABBBYY) and transcription (e.g. via Whisper) may occur on a separate service, such as occurs with the technical-metadata service.  In this case, the robot step will make an API call out to the new service(s)
+* Read-only preservation mounts will be required on whatever VMs are performing OCR and transcription.
+* Argo and pre-assembly will need to be changed to add user interface elements needed to pass messages to the new workflow.  The variables needed will be defined later, but will include:
+
+** should OCR and transcription be peformed?
+** is review required?
+** [more]
 
 ### TBD
 
 Some issues are known to be outstanding and will be decided later:
 
-*
+* Which exact variables need to be passed from the accessioneer through the system.
+* Where these variables will be stored (e.g. in cocina or in the workflow model).
+* Which (potentially new) system will be used to perform reviews and how OCR and transcription will be edited.
+* [more]
 
 ## Links <!-- optional -->
 
