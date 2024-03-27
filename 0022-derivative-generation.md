@@ -1,10 +1,10 @@
 ---
 layout: default
-title: ADR-0021
+title: ADR-0022
 nav_order: 25
 permalink: records/0022
 ---
-# Non-required Derivative File Generation in SDR (OCR/Transcription)
+# Text Derivative File Generation in SDR (OCR/Transcription)
 
 * Status: [proposed]
 * Decider(s): <!-- required -->
@@ -23,7 +23,13 @@ permalink: records/0022
 
 ## Context and Problem Statement <!-- required -->
 
-Automated OCR (from images/PDFs) and transcription (from video/audio) are desired for a subset of content deposited in SDR in order to improve accessibility and discoverability.  Current processes for generating these derivative files are manual and require operator intervention.  This process will automate the generation of these derivative files via various mechanisms (either on-demand or by other requests made by operators).  This addresses "non-required" derivatives (though may be referred to simply as "derivatives" throughout this ADR, which are defined as derivative files which add value to the delivery of content, but are not required for delivery itself.
+Automated OCR (from images/PDFs) and transcription (from video/audio) are desired for a subset of content deposited in SDR in order to improve accessibility and discoverability.  Current processes for generating these derivative files are manual and require operator intervention.  This proposal is to automate the generation of these derivative files via various mechanisms (either on-demand or by other requests made by operators).
+
+This propsal addresses so called "non-image" derivatives (though they may be referred to simply as "derivatives" throughout this ADR).  For the purpose of this ADR, "non-image" derivatives are defined as derivative files which add value to the delivery of content, but are not stricly required for delivery itself.  For example, JP2s must be created for the image viewer to work, and so these derivatives must be generated during accessioning prior to shelving, or else the image viewer will not work at all.  OCR and transcription derivative files are used to make content accessible and searchable, but the viewers themselves will still work even if the derivatives are not present.  Note that while the viewer will work, it may not meet accessibly requirements without the derivatives.
+
+This distinction is useful because some derivatives must be generated during accessioning, while others can be genereated after accessioning.
+
+For additional context, see Links section below.
 
 ## Decision Drivers <!-- optional -->
 
@@ -33,19 +39,23 @@ Automated OCR (from images/PDFs) and transcription (from video/audio) are desire
 * Users should be able to review generated derivatives before proceeding.
 * Users should be able to replace / edit / update generated derivatives as part of the review process.
 * Users should be able to regenerate existing derivatives.
-* Generation of non-required derivatives should not delay accessioning.
+* Generation of non-image derivatives should not delay accessioning.
 * Derivative generation failure should be handled
 * Derivatives should be versioned and there should be a single system from which all files can be retrieved.
 
 ## Considered Options <!-- required -->
 
-* Workflow driven solution
-* Messaging driven solution
-* Combination of the two
+Three original options were considered, as summarized in [this document](https://docs.google.com/document/d/10MzjOjwmuijHD5rgO5QxxuLKFwv94Lq29vDy0Y_xDUg)
+
+* Option 1 had derivatives generated prior to accessioning (similar to the current manual process)
+* Option 2 had derivatives generated during accessioning (similar to JP2 creation)
+* Option 3 had derivatives generated after accessioning
+
+After considering the pros and cons of each approach, a form of option 3 was selected, and is described here.  The deficiencies of option 1 and 2 that led to this option are summarized in the above document.  It uses a combination of a message and workflow driven solution as described in [this document](https://docs.google.com/document/d/1JLJwio7xVDDh75KY3dZJIFPDep-92hoQJ5p9EgFKabY)
 
 ## Decision Outcome <!-- required -->
 
-After discussions (with notes and original proposals linked below), we propose to use a combination of messaging and new workflow(s) to produce non-required derivatives.
+After discussions (with notes and original proposals linked below), we propose to use a combination of messaging and new workflow(s) to produce non-image derivatives, a form of Option 3 as decribed in documents listed above.
 
 [SUMMARY HERE]
 
@@ -57,6 +67,7 @@ Some issues are known to be outstanding and will be decided later:
 
 ## Links <!-- optional -->
 
-* [Running notes](https://docs.google.com/document/d/1H1zy-yCDErMTf2IWK1PdN9r_6IjqRqiREc0yYnaiYvo/edit)
-* [High level overview of options by Andrew](https://docs.google.com/document/d/10MzjOjwmuijHD5rgO5QxxuLKFwv94Lq29vDy0Y_xDUg)
+* [Integrating Text Extraction into SDR Accessioning - Architecture Forum Overview](https://docs.google.com/document/d/1vzDFaD9BKmyDaJdXcVIp82Vd2BJ9hnuUH1KhXilEOWk)
 * [Deriviative Generation Proposal](https://docs.google.com/document/d/1JLJwio7xVDDh75KY3dZJIFPDep-92hoQJ5p9EgFKabY)
+* [Meeting Running notes](https://docs.google.com/document/d/1H1zy-yCDErMTf2IWK1PdN9r_6IjqRqiREc0yYnaiYvo/edit)
+* [High level overview of options by Andrew](https://docs.google.com/document/d/10MzjOjwmuijHD5rgO5QxxuLKFwv94Lq29vDy0Y_xDUg)
